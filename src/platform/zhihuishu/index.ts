@@ -34,17 +34,6 @@ function questions2json(questions: JQuery<HTMLElement>): QuestionItem[] {
         .toArray();
 }
 
-export class QuestionItemFromZHIHUISHU extends QuestionAdapter {
-    parse(): Question[] {
-        const questionItem = questions2json($('.examPaper_subject'));
-        return questionItem.map((item, index) => new QuestionOfZHIHUISHU(index, { question: item.question, options: item.options, type: item.type }));
-    }
-
-    match() {
-        return /^(.)*:\/\/onlineexamh5new\.zhihuishu\.com\/stuExamWeb\.html.*/.test(location.href);
-    }
-}
-
 export class QuestionOfZHIHUISHU extends Question {
     constructor(public position: number, question: QuestionItem) {
         super(question.question, question.options, question.type);
@@ -71,5 +60,16 @@ export class QuestionOfZHIHUISHU extends Question {
             $(`.examPaper_subject:eq(${this.position}) .subject_node .nodeLab input[type]:eq(${index})`).click();
             await delay(1000);
         }
+    }
+}
+
+export class QuestionItemFromZHIHUISHU extends QuestionAdapter {
+    parse(): Question[] {
+        const questionItem = questions2json($('.examPaper_subject'));
+        return questionItem.map((item, index) => new QuestionOfZHIHUISHU(index, { question: item.question, options: item.options, type: item.type }));
+    }
+
+    match() {
+        return /^(.)*:\/\/onlineexamh5new\.zhihuishu\.com\/stuExamWeb\.html.*/.test(location.href);
     }
 }

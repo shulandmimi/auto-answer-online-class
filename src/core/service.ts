@@ -1,4 +1,4 @@
-import { Question } from './question';
+import { Question, QuestionType } from './question';
 
 interface ServiceFetchParams extends Omit<GM_xmlhttpRequestParams, 'onload' | 'onerror'> {
 }
@@ -24,5 +24,6 @@ export abstract class Service {
     }
     abstract fetch(question: Question): Promise<Success<any> | Failed>;
 
-    abstract format(question: Question, data: string): QuestionAnswer;
+    abstract format_answer(question: Question, data: string): QuestionAnswer;
+    abstract format_option(type: QuestionType, option: string): string;
 }

@@ -2,7 +2,7 @@ import { Question, QuestionType } from '../core/question';
 import { QuestionAnswer, Service } from '../core/service';
 
 export class ICodef extends Service {
-    fetch(question: Question): Promise<Success<any> | Failed> {
+    fetch(question: Pick<Question, 'question' | 'type'>): Promise<Success<any> | Failed> {
         return new Promise(async resolve => {
             const response = await Service.fetch({
                 method: 'POST',
@@ -18,21 +18,25 @@ export class ICodef extends Service {
         });
     }
 
-    format(question: Question, data: string): QuestionAnswer {
+    format_answer(question: Question, data: string): QuestionAnswer {
         const answers: string[] = [];
 
         switch (question.type) {
             case QuestionType.Checkbox:
                 const datas = data.split('#');
-                answers.push(...datas);
+                answers.push(...datas.map(item => item.trim()));
                 break;
             case QuestionType.Radio:
-                answers.push(data);
+                answers.push(data.trim());
                 break;
         }
 
         return {
             answers,
         };
+    }
+
+    format_option(type: QuestionType, option: string): string {
+        return option.trim().replace(/，/g, ',').replace(/。/g, '.').replace(/（/g, '(').replace(/）/g, ')').replace(/(“|”)/g, '"');
     }
 }

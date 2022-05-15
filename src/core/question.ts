@@ -1,18 +1,18 @@
 export abstract class Question {
     abstract position: number;
     answer?: number[];
-    rawAnswer?: string;
+    rawAnswer?: string[];
     constructor(public question: string = '', public options: Option[] = [], public type: QuestionType = QuestionType.Radio) {}
 
     set_answer(answer: number[]) {
         this.answer = answer;
     }
 
-    match_answer(answers: string[]): number[] {
+    match_answer(answers: string[], format: (type: QuestionType, data: string) => string): number[] {
         return this.options
-            .map((item, index) => [item, index] as const)
+            .map((item, index) => [format(this.type, item.body), index] as const)
             .filter(([option]) => {
-                return answers.some(answer => new RegExp(option.body).test(answer));
+                return answers.some(answer => new RegExp(option).test(answer) || option === answer);
             })
             .map(([_, index]) => index);
     }

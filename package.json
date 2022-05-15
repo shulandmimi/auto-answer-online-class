@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "eventemitter3": "^4.0.7",
     "jquery": "^3.6.0",
     "tslib": "^2.4.0"
   },

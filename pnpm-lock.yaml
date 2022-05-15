@@ -3,6 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   '@rollup/plugin-typescript': ^8.3.2
   '@types/jquery': ^3.5.14
+  eventemitter3: ^4.0.7
   jquery: ^3.6.0
   rollup: ^2.73.0
   ts-loader: ^9.3.0
@@ -13,6 +14,7 @@ specifiers:
   webpack-cli: ^4.9.2
 
 dependencies:
+  eventemitter3: 4.0.7
   jquery: 3.6.0
   tslib: 2.4.0
 
@@ -466,6 +468,10 @@ packages:
   /estree-walker/1.0.1:
     resolution: {integrity: sha512-1fMXF3YP4pZZVozF8j/ZLfvnR8NSIljt56UhbZ5PeeDmmGHpgpdwQt7ITlGvYaQukCvuBRMLEiKiYC+oeIg4cg==}
     dev: true
+
+  /eventemitter3/4.0.7:
+    resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
+    dev: false
 
   /events/3.3.0:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}

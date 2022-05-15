@@ -1,8 +1,8 @@
 // @ts-ignore
-import { Configuration } from 'webpack';
+import { Configuration, webpack } from 'webpack';
 import path from 'path';
 
-export default {
+const compiler = webpack({
     entry: {
         main: './src/index.ts',
     },
@@ -10,7 +10,7 @@ export default {
         rules: [
             {
                 test: /\.ts$/,
-                use: [{ loader: 'ts-loader', options: { 'configFile': path.resolve('tsconfig.webpack.json') }}],
+                use: [{ loader: 'ts-loader', options: { 'configFile': path.resolve('tsconfig.node.json') }}],
             },
         ],
     },
@@ -22,4 +22,14 @@ export default {
     resolve: {
         extensions: ['.ts', '.js', '.json']
     },
-} as Configuration;
+} as Configuration)
+
+compiler.run((err, stats) => {
+    if(err) {
+        console.log(err);
+        return;
+    }
+    console.log(stats?.toString({
+        colors: true,
+    }))
+})
