@@ -1,9 +1,9 @@
-import { Question, QuestionAdapter, QuestionItem, QuetionType } from "../../core/question";
+import { Question, QuestionAdapter, QuestionItem, QuestionType } from "../../core/question";
 
 function questions2json(questions: JQuery<HTMLElement>): QuestionItem[] {
     return questions
         .map((index, question) => ({
-            type: QuetionType.Radio,
+            type: QuestionType.Radio,
             question: $(question).find('.ti-q-c').text(),
             options: $(question)
                 .find('.ti-alist .ti-a')

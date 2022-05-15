@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack build --mode=development -w",
+    "start": "ts-node build/dev.ts",
     "build": "webpack build --mode=production"
   },
   "keywords": [],

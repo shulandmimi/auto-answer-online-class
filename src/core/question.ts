@@ -2,7 +2,7 @@ export abstract class Question {
     abstract position: number;
     answer?: number[];
     rawAnswer?: string;
-    constructor(public question: string = '', public options: Option[] = [], public type: QuetionType = QuetionType.Radio) {}
+    constructor(public question: string = '', public options: Option[] = [], public type: QuestionType = QuestionType.Radio) {}
 
     set_answer(answer: number[]) {
         this.answer = answer;
@@ -17,7 +17,7 @@ export abstract class Question {
             .map(([_, index]) => index);
     }
 
-    abstract select(): void;
+    abstract select(): Promise<void> | void;
 }
 
 export abstract class QuestionAdapter {
@@ -32,11 +32,11 @@ export interface Option {
 export interface QuestionItem {
     question: string;
     options: Option[];
-    type: QuetionType;
+    type: QuestionType;
     answer?: number;
 }
 
-export enum QuetionType {
+export enum QuestionType {
     /** 单选 */
     Radio = 0,
     /** 多选 */
