@@ -34,7 +34,7 @@ export class QuestionItemFromMooc extends QuestionAdapter {
 
 export class QuestionOfMooc extends Question {
     constructor(public position: number, question: QuestionItem) {
-        super(question.question, question.options);
+        super(question.question, question.options, question.type);
     }
 
     select() {

@@ -15,9 +15,10 @@ const compiler = webpack({
         ],
     },
     mode: 'production',
-    devtool: 'cheap-module-source-map',
+    devtool: 'hidden-nosources-cheap-module-source-map',
     output: {
         filename: '[name].js',
+        clean: true,
     },
     resolve: {
         extensions: ['.ts', '.js', '.json']

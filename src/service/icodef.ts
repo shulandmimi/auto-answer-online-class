@@ -18,10 +18,9 @@ export class ICodef extends Service {
         });
     }
 
-    format_answer(question: Question, data: string): QuestionAnswer {
+    format_answer(type: QuestionType, data: string): QuestionAnswer {
         const answers: string[] = [];
-
-        switch (question.type) {
+        switch (type) {
             case QuestionType.Checkbox:
                 const datas = data.split('#');
                 answers.push(...datas.map(item => item.trim()));

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node build/dev.ts",
-    "build": "webpack build --mode=production"
+    "build": "ts-node -P tsconfig.node.json webpack.config.ts "
   },
   "keywords": [],
   "author": "",

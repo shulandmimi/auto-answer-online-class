@@ -1,4 +1,4 @@
-import { Question, QuestionAdapter, QuestionMatchStatus } from './core/question';
+import { Question, QuestionAdapter, QuestionMatchStatus, QuestionType } from './core/question';
 import { QuestionItemFromMooc } from './platform/mooc/index';
 import delay from './utools/delay';
 import { QuestionItemFromZHIHUISHU } from './platform/zhihuishu/index';
@@ -36,8 +36,6 @@ async function main() {
         };
     }
 
-
-
     showMessage('准备开始...').delay(2000);
 
     await delay(2000);
@@ -59,13 +57,15 @@ async function main() {
                 } else if (response.code === -1) {
                     showMessage('未找到答案');
                 }
+                view.emit(EventEmitType.USER_SEARCH_RESULT, { status: 1 });
                 return;
             }
 
-            view.emit(EventEmitType.USER_SEARCH_RESULT, [response.data]);
+            view.emit(EventEmitType.USER_SEARCH_RESULT, { status: 0, data: service.format_answer(QuestionType.Checkbox, response.data).answers });
             showMessage('查找完毕').delay(5000);
         } catch (error: any) {
             console.log(error);
+            view.emit(EventEmitType.USER_SEARCH_RESULT, { status: 1 });
             showMessage(`发生错误: ${error?.message || error}`).delay(5000);
         }
 
@@ -89,7 +89,7 @@ async function main() {
                 continue;
             }
 
-            const answers = service.format_answer(question, questionAnswer.data);
+            const answers = service.format_answer(question.type, questionAnswer.data);
             console.log(answers.answers);
             question.rawAnswer = answers.answers;
             const answer = question.match_answer(answers.answers, service.format_option);
@@ -121,12 +121,12 @@ class View extends EventEmitter {
         <div class="controller"></div>
         <div class="search">
             <div>
-                <input class="search-input" />
+                <input style="width: 300px" class="search-input" />
                 <button class="search-btn">搜索</button>
             </div>
             <div>
                 <span>结果:</span>
-                <span class="search-result"></span>
+                <pre class="search-result"></pre>
             </div>
         </div>
         <div class="message" style="min-height: 20px; line-height: 20px; max-height: 40px;"></div>
@@ -203,11 +203,18 @@ class View extends EventEmitter {
         const result = this.search.find('.search-result');
         search.on('click', () => {
             const value = input.val();
+            if(!value) {
+                return this.show('请输入内容');
+            }
             this.emit(EventEmitType.USER_SEARCH, value);
         });
-        this.on(EventEmitType.USER_SEARCH_RESULT, (data: string[]) => {
-            result.text(data.join('\n'));
-        });
+        this.on(EventEmitType.USER_SEARCH_RESULT, (({ status, data }: { status: 0 | 1, data?: string[]}) => {
+            if(status !== 0) {
+                result.text('未找到答案');
+                return;
+            }
+            result.text(data?.join('\n') || '');
+        }));
     }
 
     timer: any = null;
