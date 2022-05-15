@@ -22,6 +22,7 @@ export abstract class Question {
 
 export abstract class QuestionAdapter {
     abstract parse(...args: any[]): Question[];
+    abstract match(): boolean;
 }
 export interface Option {
     prefix: string;

@@ -21,5 +21,5 @@ export default {
     },
     resolve: {
         extensions: ['.ts', '.js', '.json']
-    }
+    },
 } as Configuration;

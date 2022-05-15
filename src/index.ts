@@ -2,19 +2,37 @@ import { Question, QuestionAdapter, QuestionMatchStatus } from './core/question'
 import { QuestionItemFromMooc } from './platform/mooc/index';
 import delay from './utools/delay';
 import fetch_answer from './utools/fetch_answer';
+import { QuestionItemFromZHIHUISHU } from './platform/zhihuishu/index';
 
 class Questions {
+    static questionAdapter: QuestionAdapter[] = [];
     constructor(public quetions: Question[]) {}
 
     static from(adapter: QuestionAdapter): Questions {
         return new Questions(adapter.parse());
     }
+
+
+    static registerAdapter<T extends QuestionAdapter>(adapter: { new(): T }) {
+        const instance = new adapter();
+        if(!instance.match()) return;
+        this.questionAdapter.push(instance);
+    }
 }
 
+Questions.registerAdapter(QuestionItemFromMooc);
+Questions.registerAdapter(QuestionItemFromZHIHUISHU);
+
 async function main() {
-    const questions = Questions.from(new QuestionItemFromMooc());
+    const adapterIndex = 0;
+    const questions = Questions.from(Questions.questionAdapter[adapterIndex]);
     const view = new View();
     $(document.body).append(view.container);
+
+    const showMessage = (message: string) => {
+        view.show(JSON.stringify(message, null, 4));
+        console.log(message);
+    }
 
     for (const index in questions.quetions) {
         const question = questions.quetions[index];
@@ -27,9 +45,9 @@ async function main() {
             status = QuestionMatchStatus.NOTFOUND;
             if (questionAnswer.code !== 1) {
                 if (questionAnswer.code === 0) {
-                    console.log('发生错误');
+                    showMessage('发生错误');
                 } else if (questionAnswer.code === -1) {
-                    console.log('未找到答案');
+                    showMessage('未找到答案');
                 }
                 continue;
             }
@@ -39,7 +57,7 @@ async function main() {
             const answer = question.match_answer([questionAnswer.data]);
             status = QuestionMatchStatus.NOTMATCH;
             if (!answer.length) {
-                console.log('没匹配到答案');
+                showMessage('没匹配到答案');
                 continue;
             }
             status = QuestionMatchStatus.MATCHED;
@@ -58,6 +76,7 @@ class View {
     container: JQuery<HTMLDivElement> =
         $(`<div class="container" style="position: fixed;right: 0;top: 0;width: 500px;max-height: 400px;background: #fff;overflow: hidden auto;">
         <div class="controller"></div>
+        <div class="message" style="min-height: 20px; line-height: 20px; max-height: 40px;"></div>
         <div class="list" style="position: relative;">
             <table class="header-fixed" style="height: 20px; width: 100%;background: #fff;">
                 <tr>
@@ -73,6 +92,7 @@ class View {
     </div>`);
     controller: JQuery = this.container.find('.controller');
     listarea: JQuery = this.container.find('.list table.listarea');
+    message: JQuery = this.container.find('.message');
     constructor() {
         this.init();
     }
@@ -120,6 +140,15 @@ class View {
             openIcon.show();
         });
     }
+
+    timer: any = null;
+    show(message: string, delay: number = 1000) {
+        clearTimeout(this.timer);
+        this.message.text(message);
+        this.timer = setTimeout(() => {
+            this.message.text('');
+        }, delay);
+    }
 }
 
 window.addEventListener('load', () => {
@@ -127,3 +156,4 @@ window.addEventListener('load', () => {
         main();
     }, 1000);
 });
+
