@@ -23,6 +23,9 @@ const compiler = webpack({
     resolve: {
         extensions: ['.ts', '.js', '.json']
     },
+    externals: {
+        unsafeWindow: 'unsafeWindow'
+    }
 } as Configuration)
 
 compiler.run((err, stats) => {

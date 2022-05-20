@@ -12,7 +12,7 @@ export abstract class Question {
         return this.options
             .map((item, index) => [format(this.type, item.body), index] as const)
             .filter(([option]) => {
-                return answers.some(answer => new RegExp(option).test(answer) || option === answer);
+                return answers.some(answer => option.includes(answer) || option === answer);
             })
             .map(([_, index]) => index);
     }

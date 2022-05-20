@@ -5,6 +5,14 @@ import { QuestionItemFromZHIHUISHU } from './platform/zhihuishu/index';
 import { ICodef } from './service/icodef';
 import EventEmitter from 'eventemitter3';
 
+try {
+    // @ts-ignore
+    (unsafeWindow || window).Element.prototype.attachShadow = undefined;
+} catch (error) {
+
+}
+
+
 class Questions {
     static questionAdapter: QuestionAdapter[] = [];
     constructor(public quetions: Question[]) {}
@@ -12,7 +20,6 @@ class Questions {
     static from(adapter: QuestionAdapter): Questions {
         return new Questions(adapter.parse());
     }
-
 
     static registerAdapter<T extends QuestionAdapter>(adapter: { new(): T }) {
         const instance = new adapter();
@@ -115,6 +122,11 @@ enum EventEmitType {
     USER_SEARCH_RESULT = 'USER_SEARCH_RESULT'
 }
 
+const background = {
+    [QuestionMatchStatus.NOTFOUND]: 'rgba(255, 0, 0, 0.3)',
+    [QuestionMatchStatus.NOTMATCH]: 'rgba(0, 255, 0, 0.3)',
+    [QuestionMatchStatus.MATCHED]: 'rgba(0, 0, 255, 0.3)',
+};
 class View extends EventEmitter {
     container: JQuery<HTMLDivElement> =
         $(`<div class="container" style="z-index: 1000; position: fixed;right: 0;top: 0;width: 500px;max-height: 400px;background: #fff;overflow: hidden auto;">
@@ -131,6 +143,11 @@ class View extends EventEmitter {
         </div>
         <div class="message" style="min-height: 20px; line-height: 20px; max-height: 40px;"></div>
         <div class="list" style="position: relative;">
+            <div style="display: flex; align-items: center;">
+                未完全匹配答案<div style="margin-right: 10px; width: 10px; height: 10px; background: ${background[QuestionMatchStatus.NOTMATCH]}"></div>
+                未匹配到答案<div style="margin-right: 10px; width: 10px; height: 10px; background: ${background[QuestionMatchStatus.NOTFOUND]}"></div>
+                匹配到答案<div style="margin-right: 10px; width: 10px; height: 10px; background: ${background[QuestionMatchStatus.MATCHED]}"></div>
+            </div>
             <table class="header-fixed" style="height: 20px; width: 100%;background: #fff;">
                 <tr>
                     <td width="50px">序号</td>
@@ -139,9 +156,10 @@ class View extends EventEmitter {
                 </tr>
             </table>
             <div class="list-body" style="overflow: hidden auto; max-height: 300px;">
+
                 <table class="listarea"></table>
             </div>
-        </div>
+            </div>
     </div>`);
     controller: JQuery = this.container.find('.controller');
     listarea: JQuery = this.container.find('.list table.listarea');
@@ -158,11 +176,7 @@ class View extends EventEmitter {
     }
 
     appendItem(question: Question, status: QuestionMatchStatus) {
-        const background = {
-            [QuestionMatchStatus.NOTFOUND]: 'rgba(255, 0, 0, 0.3)',
-            [QuestionMatchStatus.NOTMATCH]: 'rgba(0, 255, 0, 0.3)',
-            [QuestionMatchStatus.MATCHED]: 'rgba(0, 0, 255, 0.3)',
-        };
+
         const item = $(`<tr style="background: ${background[status]}; color: rgba(0,0,0, 0.71);">
             <td width="50px">${question.position + 1}</td>
             <td width="300px" style="padding: 5px 10px">${question.question}</td>
