@@ -1,11 +1,12 @@
-import { EventEmitType, QuestionIterable } from "..";
-import { Question, QuestionMatchStatus } from "../core/question";
-import { QuestionAdapterManager } from "../platform";
-import { QuestionItemFromChaoxing } from "../platform/chaoxing";
-import { QuestionItemFromMooc } from "../platform/mooc";
-import { QuestionItemFromZHIHUISHU } from "../platform/zhihuishu";
-import delay from "../utils/delay";
-import { View, ViewPlugin } from ".";
+import { EventEmitType, QuestionIterable } from '..';
+import { Question, QuestionMatchStatus } from '../core/question';
+import { QuestionAdapterManager } from '../platform';
+import { QuestionItemFromChaoxing } from '../platform/chaoxing';
+import { QuestionItemFromMooc } from '../platform/mooc';
+import { QuestionItemFromZHIHUISHU } from '../platform/zhihuishu';
+import delay from '../utils/delay';
+import { View, ViewPlugin } from '.';
+import { ServiceAdapterManager } from '../service/index';
 
 const background = {
     [QuestionMatchStatus.NOTFOUND]: 'rgba(255, 0, 0, 0.3)',
@@ -61,23 +62,22 @@ export class AnswerView extends ViewPlugin {
     }
 
     register(element: JQuery, view: View) {
-        const controllerContainer = element.find('.autoFindController');
-        controllerContainer.find('.pause').on('click', () => {
+        this.container.find('.pause').on('click', () => {
             view.emit(EventEmitType.AUTO_FIND_PAUSE);
         });
-        controllerContainer.find('.play').on('click', () => {
+        this.container.find('.play').on('click', () => {
             view.emit(EventEmitType.AUTO_FIND_PLAY);
         });
 
-        controllerContainer.find('.reset').on('click', () => {
+        this.container.find('.reset').on('click', () => {
             this.resetQuestions();
             view.emit(EventEmitType.REFIND_QUESTION);
         });
     }
 
     autoFind() {
-        const container = this.container.find('.listarea');
         const self = this;
+        const view = this.view;
 
         const questionAdapterManager = new QuestionAdapterManager();
         questionAdapterManager.register(new QuestionItemFromMooc());
@@ -88,32 +88,48 @@ export class AnswerView extends ViewPlugin {
 
         async function questionProcessHandler(question: Question, index: number) {
             let status: QuestionMatchStatus;
-
+            const service = ServiceAdapterManager.getInstance().getAdapter();
             try {
                 console.group(`${Number(index) + 1}: ${question.question}`);
-                const questionAnswer = await service.fetch(question);
+
+                const questionAnswer = await service.fetch({
+                    question: question.question,
+                    type: question.type,
+                    options: question.options,
+                });
+
                 console.log(questionAnswer.data);
+
                 status = QuestionMatchStatus.NOTFOUND;
+
                 if (questionAnswer.code !== 1) {
                     if (questionAnswer.code === 0) {
-                        // showMessage('发生错误').delay(2000);
+                        console.log('发生错误');
                     } else if (questionAnswer.code === -1) {
-                        // showMessage('未找到答案').delay(2000);
+                        console.log('未找到答案');
                     }
                     return;
                 }
 
                 const answers = service.format_answer(question.type, questionAnswer.data);
+
                 console.log(answers.answers);
+
                 question.rawAnswer = answers.answers;
+
                 const answer = question.match_answer(answers.answers, service.format_option);
+
                 console.log(answer);
+
                 status = QuestionMatchStatus.NOTMATCH;
+
                 if (!answer.length) {
-                    // showMessage('没匹配到答案');
+                    console.log('没匹配到答案');
                     return;
                 }
+
                 status = QuestionMatchStatus.MATCHED;
+
                 question.set_answer(answer);
                 await question.select();
             } finally {
@@ -123,17 +139,31 @@ export class AnswerView extends ViewPlugin {
             }
         }
         questionInterable.next(questionProcessHandler);
+        view.on(EventEmitType.AUTO_FIND_PAUSE, () => {
+            questionInterable.pause();
+        });
+        view.on(EventEmitType.AUTO_FIND_PLAY, () => {
+            questionInterable.setStatus('canplay');
+            questionInterable.next(questionProcessHandler);
+        });
+        view.on(EventEmitType.REFIND_QUESTION, () => {
+            self.resetQuestions();
+            questionInterable.resetContext();
+            questionInterable.next(questionProcessHandler);
+        });
     }
 
     appendQuestion(question: Question, status: QuestionMatchStatus) {
         const { position, question: title, rawAnswer } = question;
-        $(`
+        this.container.find('.listarea').append(
+            $(`
             <tr style="background: ${background[status]}; color: rgba(0,0,0, 0.71);">
                 <td width="50px">${position + 1}</td>
                 <td width="300px" style="padding: 5px 10px">${title}</td>
                 <td width="150px">${rawAnswer?.length ? rawAnswer.join('<br/><br/>') : '未找到答案'}</td>
             </tr>
-        `);
+        `)
+        );
     }
 
     resetQuestions() {

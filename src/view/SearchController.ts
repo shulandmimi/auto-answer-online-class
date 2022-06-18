@@ -1,5 +1,8 @@
-import { EventEmitType } from "..";
-import { View, ViewPlugin } from ".";
+import { EventEmitType } from '..';
+import { View, ViewPlugin } from '.';
+import { ServiceAdapterManager } from '../service/index';
+import { QuestionType, Question } from '../core/question';
+import { Message } from './Message';
 
 export class SearchController extends ViewPlugin {
     name = 'search-controller';
@@ -25,20 +28,30 @@ export class SearchController extends ViewPlugin {
 
     register(element: JQuery, view: View) {
         const input = element.find('.search-input');
-        view.on(EventEmitType.USER_SEARCH_RESULT, ({ status, data }: { status: 0 | 1; data?: string[] }) => {
-            if (status !== 0) {
-                view.show('未找到答案');
-                return;
-            }
-            view.show(data?.join('\n') || '');
-        });
-        element.find('.search-btn').on('click', () => {
+        element.find('.search-btn').on('click', async () => {
             const value = input.val();
             if (!value) {
-                view.show('请输入内容');
+                Message.show(view, '请输入内容');
                 return;
             }
-            view.emit(EventEmitType.USER_SEARCH, value);
+            const service = ServiceAdapterManager.getInstance().getAdapter();
+            const response = await service.fetch({
+                question: value as string,
+                type: QuestionType.Radio,
+                options: [],
+            });
+
+            if (response.code !== 1) {
+                if (response.code === 0) {
+                    Message.show(view, '发生错误');
+                } else if (response.code === -1) {
+                    Message.show(view, '未找到答案');
+                }
+                return;
+            }
+
+            const data = service.format_answer(QuestionType.Checkbox, response.data).answers;
+            Message.show(view, data.join('\n'));
         });
     }
 }

@@ -1,8 +1,9 @@
-import { Question, QuestionType } from '../core/question';
+import { Question, QuestionType, QuestionItem } from '../core/question';
 import { QuestionAnswer, Service } from '../core/service';
 
 export class ICodef extends Service {
-    fetch(question: Pick<Question, 'question' | 'type'>): Promise<Success<any> | Failed> {
+    name: string = 'icodef';
+    fetch(question: QuestionItem): Promise<Success<any> | Failed> {
         return new Promise(async resolve => {
             const response = await Service.fetch({
                 method: 'POST',

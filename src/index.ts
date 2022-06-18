@@ -8,6 +8,10 @@ import { QuestionAdapterManager } from './platform';
 import { WindowController } from './view/WindowController';
 import { SearchController } from './view/SearchController';
 import { AnswerView } from './view/AnswerView';
+import { ServiceAdapterChange } from './view/ServiceAdapterChange';
+import { ServiceAdapterManager } from './service/index';
+import { ICodef } from './service/icodef';
+import { Message } from './view/Message';
 
 try {
     // @ts-ignore
@@ -368,8 +372,13 @@ const background = {
 window.addEventListener('load', () => {
     const application = new View();
 
+    const serviceAdapterManager = ServiceAdapterManager.getInstance();
+    serviceAdapterManager.register(new ICodef());
+
     application.register(new WindowController());
+    application.register(new ServiceAdapterChange());
     application.register(new SearchController());
+    application.register(new Message());
     application.register(new AnswerView());
     application.start();
     $(document.body).append(application.container);
