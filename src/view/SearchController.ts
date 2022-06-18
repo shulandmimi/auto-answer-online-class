@@ -1,7 +1,6 @@
-import { EventEmitType } from '..';
 import { View, ViewPlugin } from '.';
 import { ServiceAdapterManager } from '../service/index';
-import { QuestionType, Question } from '../core/question';
+import { QuestionType } from '../core/question';
 import { Message } from './Message';
 
 export class SearchController extends ViewPlugin {

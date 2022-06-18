@@ -164,6 +164,7 @@ export class AnswerView extends ViewPlugin {
             </tr>
         `)
         );
+        this.container.find('.list-body').scrollTop(Number.MAX_SAFE_INTEGER);
     }
 
     resetQuestions() {
