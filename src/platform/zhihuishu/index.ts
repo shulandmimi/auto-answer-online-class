@@ -1,5 +1,5 @@
 import { Question, QuestionAdapter, QuestionItem, QuestionType } from "../../core/question";
-import delay from '../../utools/delay';
+import delay from '../../utils/delay';
 
 const typeRegList: [QuestionType, RegExp][] = [
     [QuestionType.Radio, /单选题/],

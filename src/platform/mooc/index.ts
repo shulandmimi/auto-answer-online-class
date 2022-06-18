@@ -8,7 +8,7 @@ function questions2json(questions: JQuery<HTMLElement>): QuestionItem[] {
             options: $(question)
                 .find('.ti-alist .ti-a')
                 .map((index, option) => {
-                    const optionel = $(option);
+                    const optionel: JQuery = $(option);
                     const prefix = optionel.find('.ti-a-i').text().trim();
                     const body = optionel.find('.ti-a-c').text().trim();
                     return {
