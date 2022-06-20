@@ -14,10 +14,17 @@ const background = {
     [QuestionMatchStatus.MATCHED]: 'rgba(0, 0, 255, 0.3)',
 };
 
+export enum ANSWER_EVENT_TYPE {
+    FOLD = 'FOLD',
+}
+
 export class AnswerView extends ViewPlugin {
     name = 'answer-view';
     view!: View;
     container!: JQuery;
+
+    static event = ANSWER_EVENT_TYPE;
+
     apply(view: View) {
         const element = (this.container = this.createElement());
         this.view = view;
@@ -72,6 +79,10 @@ export class AnswerView extends ViewPlugin {
         this.container.find('.reset').on('click', () => {
             this.resetQuestions();
             view.emit(EventEmitType.REFIND_QUESTION);
+        });
+
+        view.on(AnswerView.event.FOLD, () => {
+            this.container.toggle();
         });
     }
 

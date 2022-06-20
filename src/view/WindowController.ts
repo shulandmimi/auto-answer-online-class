@@ -1,4 +1,5 @@
-import { View, ViewPlugin } from ".";
+import { View, ViewPlugin } from '.';
+import { AnswerView } from './AnswerView';
 
 export class WindowController extends ViewPlugin {
     name = 'window-controller';
@@ -12,8 +13,9 @@ export class WindowController extends ViewPlugin {
     createElement() {
         return $(`
         <div style="display: flex; justify-content: flex-end; width: 100%; align-items: center; align-content: center; font-size: 24px;">
-            <div style="width: 20px; height: 20px; padding-left: 5px; line-height: 20px;" class="windowToMin">-</div>
-            <div style="width: 20px; height: 20px; padding-left: 5px; line-height: 20px;" class="windowClose">x</div>
+            <div style="cursor: pointer; height: 20px; padding-left: 5px; line-height: 20px; font-size: .7em;" class="fold">折叠答案区域</div>
+            <div style="cursor: pointer; width: 20px; height: 20px; padding-left: 5px; line-height: 20px;" class="windowToMin">-</div>
+            <div style="cursor: pointer; width: 20px; height: 20px; padding-left: 5px; line-height: 20px;" class="windowClose">x</div>
         </div>
         `);
     }
@@ -34,6 +36,9 @@ export class WindowController extends ViewPlugin {
         element.find('.windowToMin').on('click', () => {
             container.hide();
             openIcon.show();
+        });
+        element.find('.fold').on('click', () => {
+            view.emit(AnswerView.event.FOLD);
         });
     }
 }
