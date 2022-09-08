@@ -14,8 +14,10 @@ import { ICodef } from './service/icodef';
 import { Message } from './view/Message';
 
 try {
+    const callback = function () {};
+    callback.toString = function() {return 'function () { [native code] }'};
     // @ts-ignore
-    (unsafeWindow || window).Element.prototype.attachShadow = undefined;
+    (unsafeWindow || window).Element.prototype.attachShadow = callback;
 } catch (error) {}
 
 class Questions {
