@@ -16,7 +16,8 @@
                 "*.md"
             ],
             "options": {
-                "parser": "markdown"
+                "parser": "markdown",
+                "tabWidth": 2
             }
         }
     ]

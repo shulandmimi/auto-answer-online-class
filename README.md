@@ -1,8 +1,12 @@
+# Auto-Answer-Online-Class
+
 ## 简介
 
 `auto-answer-online-class` 是一个浏览器脚本，它可以通过脚本管理器添加到你的浏览器中，并在指定的页面对某些题目进行搜索并自动选择答案。
 
 除此之外，还有用户自行输入关键字进行搜索
+
+> 此项目仅用于学习，请勿用做于其它用途，如有侵权，请通过邮箱联系
 
 **目前已支持的平台：**
 
@@ -28,5 +32,5 @@
 
 ## 联系我的方式
 
--   [GitHub](https://www.github.com/shulandmimi)
--   邮箱 `shulandmimi@163.com`
+- [GitHub](https://www.github.com/shulandmimi)
+- 邮箱 `shulandmimi@163.com`
