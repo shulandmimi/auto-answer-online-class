@@ -1,3 +1,5 @@
+import { LifeCycleEvents } from '../lifecycle';
+
 export abstract class Question {
     abstract position: number;
     answer?: number[];
@@ -20,7 +22,7 @@ export abstract class Question {
     abstract select(): Promise<void> | void;
 }
 
-export abstract class QuestionAdapter {
+export abstract class QuestionAdapter extends LifeCycleEvents<{}> {
     abstract parse(...args: any[]): Question[];
     abstract match(): boolean;
 }

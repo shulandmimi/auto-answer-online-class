@@ -1,10 +1,13 @@
-import EventEmitter from "eventemitter3";
+import EventEmitter from './eventEmitter';
 
 export enum AdapterManagerEventEmitType {
     ADAPTER_CHANGE = 'ADAPTER_CHANGE',
 }
 
-export abstract class AdapaterManager<T> extends EventEmitter {
+type AdapterManagerEvents = {
+    [AdapterManagerEventEmitType.ADAPTER_CHANGE]: () => void;
+};
+export abstract class AdapaterManager<T> extends EventEmitter<AdapterManagerEvents> {
     static ERROR = {
         ADAPTER_NOT_FOUND: class extends Error {
             constructor() {

@@ -1,4 +1,5 @@
-import { Question, QuestionAdapter, QuestionItem, QuestionType } from "../../core/question";
+import { Question, QuestionAdapter, QuestionItem, QuestionType } from '../../core/question';
+import cancelAttachShadow from '../../breakthrough/cancelAttachShadow';
 
 function questions2json(questions: JQuery<HTMLElement>): QuestionItem[] {
     return questions
@@ -6,7 +7,7 @@ function questions2json(questions: JQuery<HTMLElement>): QuestionItem[] {
             type: QuestionType.Radio,
             question: (() => {
                 const nodes = $(question).find('.mark_name').get(0)?.childNodes;
-                if(!nodes || !nodes.length) return '';
+                if (!nodes || !nodes.length) return '';
                 return nodes[nodes.length - 1]?.textContent || '';
             })(),
             options: $(question)
@@ -27,6 +28,13 @@ function questions2json(questions: JQuery<HTMLElement>): QuestionItem[] {
 }
 
 export class QuestionItemFromChaoxing extends QuestionAdapter {
+    constructor() {
+        super();
+        this.on('before_match_questions', () => {
+            cancelAttachShadow();
+        });
+    }
+
     parse(): Question[] {
         const questionItem = questions2json($('.questionLi'));
         console.log(questionItem);

@@ -149,7 +149,9 @@ export class AnswerView extends ViewPlugin {
                 await delay(3000);
             }
         }
+
         questionInterable.next(questionProcessHandler);
+
         view.on(EventEmitType.AUTO_FIND_PAUSE, () => {
             questionInterable.pause();
         });

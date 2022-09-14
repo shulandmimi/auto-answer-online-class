@@ -1,4 +1,5 @@
-import { Question, QuestionAdapter, QuestionItem, QuestionType } from "../../core/question";
+import { Question, QuestionAdapter, QuestionItem, QuestionType } from '../../core/question';
+import cancelAttachShadow from '../../breakthrough/cancelAttachShadow';
 
 function questions2json(questions: JQuery<HTMLElement>): QuestionItem[] {
     return questions
@@ -22,6 +23,14 @@ function questions2json(questions: JQuery<HTMLElement>): QuestionItem[] {
 }
 
 export class QuestionItemFromMooc extends QuestionAdapter {
+    constructor() {
+        super();
+
+        this.on('before_match_questions', () => {
+            cancelAttachShadow();
+        });
+    }
+
     parse(): Question[] {
         const questionItem = questions2json($('.queBox'));
         return questionItem.map((item, index) => new QuestionOfMooc(index, { question: item.question, options: item.options, type: item.type }));

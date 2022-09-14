@@ -1,5 +1,6 @@
-import { Question, QuestionAdapter, QuestionItem, QuestionType } from "../../core/question";
+import { Question, QuestionAdapter, QuestionItem, QuestionType } from '../../core/question';
 import delay from '../../utils/delay';
+import cancelAttachShadowByVueInstance from '../../breakthrough/cancelAttachShadowByVueInstance';
 
 const typeRegList: [QuestionType, RegExp][] = [
     [QuestionType.Radio, /单选题/],
@@ -11,7 +12,7 @@ function questions2json(questions: JQuery<HTMLElement>): QuestionItem[] {
         .map((index, question) => {
             const typeText = $(question).find('.subject_type').text();
             const type = typeRegList.reduce((result, rule) => {
-                if(rule[1].test(typeText)) return rule[0];
+                if (rule[1].test(typeText)) return rule[0];
                 return result;
             }, QuestionType.Radio);
             return {
@@ -43,20 +44,20 @@ export class QuestionOfZHIHUISHU extends Question {
         if (typeof this.position !== 'number') return;
         const answer = this.answer || [];
 
-        switch(this.type) {
+        switch (this.type) {
             case QuestionType.Checkbox:
-                for(const index in this.options) {
+                for (const index in this.options) {
                     const el = $(`.examPaper_subject:eq(${this.position}) .subject_node .nodeLab input[type]:eq(${index})`);
-                    if((el.get(0) as HTMLInputElement)?.checked) {
-                        el.click()
+                    if ((el.get(0) as HTMLInputElement)?.checked) {
+                        el.click();
                         await delay(1000);
-                    };
+                    }
                 }
                 break;
             case QuestionType.Radio:
         }
 
-        for(const index of answer) {
+        for (const index of answer) {
             $(`.examPaper_subject:eq(${this.position}) .subject_node .nodeLab input[type]:eq(${index})`).click();
             await delay(1000);
         }
@@ -64,6 +65,12 @@ export class QuestionOfZHIHUISHU extends Question {
 }
 
 export class QuestionItemFromZHIHUISHU extends QuestionAdapter {
+    constructor() {
+        super();
+        this.on('before_match_questions', () => {
+            cancelAttachShadowByVueInstance();
+        });
+    }
     parse(): Question[] {
         const questionItem = questions2json($('.examPaper_subject'));
         return questionItem.map((item, index) => new QuestionOfZHIHUISHU(index, { question: item.question, options: item.options, type: item.type }));
