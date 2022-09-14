@@ -1,3 +1,4 @@
+import type {} from 'jquery';
 import { Question, QuestionAdapter, QuestionItem, QuestionType } from '../../core/question';
 import delay from '../../utils/delay';
 import cancelAttachShadowByVueInstance from '../../breakthrough/cancelAttachShadowByVueInstance';

@@ -1,4 +1,5 @@
 import EventEmitter from './eventEmitter';
+import { LifeCycleEvents } from '../lifecycle';
 
 export enum AdapterManagerEventEmitType {
     ADAPTER_CHANGE = 'ADAPTER_CHANGE',
@@ -7,7 +8,7 @@ export enum AdapterManagerEventEmitType {
 type AdapterManagerEvents = {
     [AdapterManagerEventEmitType.ADAPTER_CHANGE]: () => void;
 };
-export abstract class AdapaterManager<T> extends EventEmitter<AdapterManagerEvents> {
+export abstract class AdapaterManager<T extends LifeCycleEvents<{}>> extends EventEmitter<AdapterManagerEvents> {
     static ERROR = {
         ADAPTER_NOT_FOUND: class extends Error {
             constructor() {
@@ -24,6 +25,7 @@ export abstract class AdapaterManager<T> extends EventEmitter<AdapterManagerEven
         if (!this.test(adapter)) return;
         if (!this.adapter) this.adapter = adapter;
         this.adapters.push(adapter);
+        this.adapter.emit('after_register');
     }
 
     use(...arg: unknown[]) {

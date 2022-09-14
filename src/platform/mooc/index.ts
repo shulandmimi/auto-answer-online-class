@@ -26,7 +26,7 @@ export class QuestionItemFromMooc extends QuestionAdapter {
     constructor() {
         super();
 
-        this.on('before_match_questions', () => {
+        this.on('after_register', () => {
             cancelAttachShadow();
         });
     }

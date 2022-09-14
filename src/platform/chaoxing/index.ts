@@ -30,7 +30,7 @@ function questions2json(questions: JQuery<HTMLElement>): QuestionItem[] {
 export class QuestionItemFromChaoxing extends QuestionAdapter {
     constructor() {
         super();
-        this.on('before_match_questions', () => {
+        this.on('after_register', () => {
             cancelAttachShadow();
         });
     }

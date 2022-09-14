@@ -1,6 +1,7 @@
 import EventEmitter from './core/eventEmitter';
 
 export type LifeCycles = {
+    after_register: () => void;
     before_match_questions: () => void;
     after_match_questions: () => void;
 };
