@@ -37,7 +37,7 @@ export class QuestionItemFromMooc extends QuestionAdapter {
     }
 
     match() {
-        return /^(.)*:\/\/(.)*\.uooc\.net\.cn\/exam/.test(location.href);
+        return /^(.)*:\/\/(.)*\.(uooc\.net\.cn|uooconline\.com)\/exam/.test(location.href);
     }
 }
 

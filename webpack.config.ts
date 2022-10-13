@@ -15,6 +15,7 @@ const inject_header = `// ==UserScript==
 // @description  进入做题界面自动查询答案并且填充内容
 // @author       shulan
 // @match        *://www.uooc.net.cn/exam/*
+// @match        *://www.uooconline.com/exam/*
 // @match        *://*.zhihuishu.com/*
 // @match        *://*.chaoxing.com/*
 // @grant        unsafeWindow
