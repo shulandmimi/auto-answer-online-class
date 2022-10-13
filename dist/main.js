@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         uooc/优课/智慧树 查题小组手
 // @namespace    http://tampermonkey.net/
-// @version      0.0.8
+// @version      0.0.9
 // @description  进入做题界面自动查询答案并且填充内容
 // @author       shulan
 // @match        *://www.uooc.net.cn/exam/*
+// @match        *://www.uooconline.com/exam/*
 // @match        *://*.zhihuishu.com/*
 // @match        *://*.chaoxing.com/*
 // @grant        unsafeWindow
@@ -1049,7 +1050,7 @@ var QuestionItemFromMooc = /** @class */ (function (_super) {
         return questionItem.map(function (item, index) { return new QuestionOfMooc(index, { question: item.question, options: item.options, type: item.type }); });
     };
     QuestionItemFromMooc.prototype.match = function () {
-        return /^(.)*:\/\/(.)*\.uooc\.net\.cn\/exam/.test(location.href);
+        return /^(.)*:\/\/(.)*\.(uooc\.net\.cn|uooconline\.com)\/exam/.test(location.href);
     };
     return QuestionItemFromMooc;
 }(question_1.QuestionAdapter));
